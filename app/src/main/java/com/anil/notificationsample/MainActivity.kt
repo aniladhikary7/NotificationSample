@@ -2,6 +2,7 @@ package com.anil.notificationsample
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -41,13 +42,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             channel1Btn -> {
                 val title = titleEt.text.toString()
                 val message = msgEt.text.toString()
-                
+
+                val activityIntent = Intent(this, MainActivity::class.java)
+                val contentIntent = PendingIntent.getActivity(this,
+                        0, activityIntent, 0)
+
+                val broadcastIntent = Intent(this, NotificationReceiver::class.java)
+                broadcastIntent.putExtra("toastMessage", message)
+                val actionIntent = PendingIntent.getBroadcast(this,
+                        0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+
                 val notification = NotificationCompat.Builder(this, CHANNEL_1_ID)
                         .setSmallIcon(R.drawable.ic_one)
                         .setContentTitle(title)
                         .setContentText(message)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                        .setContentIntent(contentIntent)
+                        .setColor(Color.BLUE)
+                        .setAutoCancel(true)
+                        .setOnlyAlertOnce(true)
+                        .addAction(R.mipmap.ic_launcher, "Toast", actionIntent)
                         .build()
                 notificationManager.notify(1, notification)
             }
